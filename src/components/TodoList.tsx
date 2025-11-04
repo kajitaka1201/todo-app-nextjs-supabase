@@ -13,8 +13,8 @@ export default function TodoList() {
 
   if (loading) {
     return (
-      <div className="text-center py-8">
-        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-500 border-r-transparent"></div>
+      <div role="status" className="text-center py-8">
+        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-500 border-r-transparent" aria-hidden="true"></div>
         <p className="mt-2 text-gray-600">読み込み中...</p>
       </div>
     );
