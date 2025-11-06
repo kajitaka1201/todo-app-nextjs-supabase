@@ -2,14 +2,18 @@
 
 import { useEffect } from "react";
 import { useTodoStore } from "@/store/todoStore";
+import { useAuthStore } from "@/store/authStore";
 import TodoItem from "./TodoItem";
 
 export default function TodoList() {
   const { todos, loading, error, fetchTodos } = useTodoStore();
+  const user = useAuthStore((state) => state.user);
 
   useEffect(() => {
-    fetchTodos();
-  }, [fetchTodos]);
+    if (user) {
+      fetchTodos(user.id);
+    }
+  }, [user, fetchTodos]);
 
   if (loading) {
     return (

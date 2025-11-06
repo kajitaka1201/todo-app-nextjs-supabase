@@ -6,8 +6,8 @@ interface TodoStore {
   todos: Todo[];
   loading: boolean;
   error: string | null;
-  fetchTodos: () => Promise<void>;
-  addTodo: (title: string) => Promise<void>;
+  fetchTodos: (userId: string) => Promise<void>;
+  addTodo: (title: string, userId: string) => Promise<void>;
   toggleTodo: (id: string) => Promise<void>;
   deleteTodo: (id: string) => Promise<void>;
 }
@@ -17,10 +17,10 @@ export const useTodoStore = create<TodoStore>((set, get) => ({
   loading: false,
   error: null,
 
-  fetchTodos: async () => {
+  fetchTodos: async (userId: string) => {
     set({ loading: true, error: null });
     try {
-      const { data, error } = await supabase.from("todos").select("*").order("created_at", { ascending: false });
+      const { data, error } = await supabase.from("todos").select("*").eq("user_id", userId).order("created_at", { ascending: false });
 
       if (error) throw error;
 
@@ -34,11 +34,11 @@ export const useTodoStore = create<TodoStore>((set, get) => ({
     }
   },
 
-  addTodo: async (title: string) => {
+  addTodo: async (title: string, userId: string) => {
     if (!title.trim()) return;
 
     try {
-      const { data, error } = await supabase.from("todos").insert({ title: title.trim(), completed: false }).select().single();
+      const { data, error } = await supabase.from("todos").insert({ title: title.trim(), completed: false, user_id: userId }).select().single();
 
       if (error) throw error;
 

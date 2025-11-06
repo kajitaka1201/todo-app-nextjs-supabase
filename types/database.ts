@@ -9,20 +9,30 @@ export interface Database {
           title: string;
           completed: boolean;
           created_at: string;
+          user_id: string;
         };
         Insert: {
           id?: string;
           title: string;
           completed?: boolean;
           created_at?: string;
+          user_id: string;
         };
         Update: {
           id?: string;
           title?: string;
           completed?: boolean;
           created_at?: string;
+          user_id?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "todos_user_id_fkey";
+            columns: ["user_id"];
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
       };
     };
     Views: {

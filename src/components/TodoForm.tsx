@@ -2,16 +2,18 @@
 
 import { useState } from "react";
 import { useTodoStore } from "@/store/todoStore";
+import { useAuthStore } from "@/store/authStore";
 
 export default function TodoForm() {
   const [title, setTitle] = useState("");
   const addTodo = useTodoStore((state) => state.addTodo);
+  const user = useAuthStore((state) => state.user);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim()) return;
+    if (!title.trim() || !user) return;
 
-    await addTodo(title);
+    await addTodo(title, user.id);
     setTitle("");
   };
 
