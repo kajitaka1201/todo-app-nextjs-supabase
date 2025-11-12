@@ -42,11 +42,23 @@ export const useAuthStore = create<AuthStore>((set) => ({
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+        },
       });
 
       if (error) throw error;
 
-      set({ user: data.user, loading: false });
+      // メール確認が必要な場合はユーザーに通知
+      if (data.user && !data.session) {
+        set({
+          user: null,
+          loading: false,
+          error: "確認メールを送信しました。メールを確認してアカウントを有効化してください。",
+        });
+      } else {
+        set({ user: data.user, loading: false });
+      }
     } catch (error) {
       console.error("Error signing up:", error);
       set({
@@ -65,7 +77,13 @@ export const useAuthStore = create<AuthStore>((set) => ({
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        // メール未確認エラーの場合、わかりやすいメッセージに変換
+        if (error.message.includes("Email not confirmed")) {
+          throw new Error("メールアドレスが確認されていません。登録時に送信された確認メールのリンクをクリックしてください。");
+        }
+        throw error;
+      }
 
       set({ user: data.user, loading: false });
     } catch (error) {
